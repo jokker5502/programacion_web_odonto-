@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agendar una Cita</title>
+</head>
+<header>
+    <h1>NeoSmile</h1>
+    <nav>
+        <ul>
+            <li><a href="Inicio.html" class="active">Inicio</a></li>
+            <li><a href="NuestrasEspecialidades.html" target="_blank">Especialidades</a></li>
+            <li><a href="contacto.html" target="_blank">Contacto</a></li>
+          </ul>
+    </nav>
+    <div class="cta-buttons">
+      <a href="AtencioEmergencias.html" class="btn emergency">Emergencias</a>
+      <a href="AgendarCita.html" class="btn primary">Agendar Cita</a>
+    </div>
+</header>
+<body>
+
+    <h1>Agendar una Cita</h1>
+    <p>Complete el formulario para solicitar su cita con nuestros especialistas</p>
+
+    <form>
+        <h2>Información Personal</h2>
+
+        <label for="nombre">Nombre completo</label><br>
+        <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre y apellidos"><br><br>
+
+        <label for="correo">Correo electrónico</label><br>
+        <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com"><br><br>
+
+        <label for="telefono">Teléfono</label><br>
+        <input type="tel" id="telefono" name="telefono" placeholder="Ingrese su número de teléfono"><br><br>
+
+        <label for="edad">Edad</label><br>
+        <input type="number" id="edad" name="edad" placeholder="Ingrese su edad"><br><br>
+
+        <h2>Detalles de la Cita</h2>
+
+        <label for="especialidad">Especialidad requerida</label><br>
+        <select id="especialidad" name="especialidad">
+            <option selected disabled>Seleccione una especialidad</option>
+        </select><br><br>
+
+        <label for="especialista">Especialista (opcional)</label><br>
+        <select id="especialista" name="especialista">
+            <option selected disabled>Seleccione un especialista si lo desea</option>
+            
+        </select><br><br>
+        <label for="fecha">Fecha preferida</label><br>
+        <input type="date" id="fecha" name="fecha"><br><br>
+
+        <label for="hora">Horario preferido</label><br>
+        <input type="time" id="hora" name="hora"><br><br>
+
+        <label for="motivo">Motivo de la consulta</label><br>
+        <textarea id="motivo" name="motivo" rows="4" placeholder="Describa brevemente el motivo de su consulta"></textarea><br><br>
+
+        <button onclick='alert("enviado")'>Enviar</button>
+        <img src="imagenes/hielo.png" onclick='src="imagenes/sangrado.png"'>
+    </form>
+
+</body>
+</html>

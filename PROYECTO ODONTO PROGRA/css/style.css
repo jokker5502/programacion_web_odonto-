@@ -1,0 +1,237 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  color: #222222;
+  margin: 0;
+  padding: 0;
+}
+
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-bottom: 1px solid #eee;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.main-header .logo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #111827;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  padding: 0;
+  margin: 0;
+}
+
+nav a {
+  text-decoration: none;
+  color: #555;
+}
+
+nav a:hover {
+  color: #000;
+}
+
+
+.foto img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+
+section {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+section p {
+  color: #666;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn.emergency {
+  background-color: #f4f0ff;
+  color: #7c3aed;
+}
+
+.btn.primary {
+  background-color: #7c3aed;
+  color: white;
+}
+
+.btn.primary:hover {
+  background-color: #5b21b6;
+}
+
+.services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.service-card {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  width: 220px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.service-card h4 {
+  margin-bottom: 10px;
+}
+
+.service-card p {
+  margin-bottom: 10px;
+  color: #666;
+}
+
+
+.btn {
+  background-color: white;
+
+}
+
+
+.btn:hover {
+  background-color: white;
+}
+
+
+.clinicas ul {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.clinicas li {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+
+.testimonios h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+.testimonios-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
+.testimonio {
+  background-color: #f5f7ff;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 250px;
+}
+
+.testimonio h4 {
+  margin: 0.5rem 0;
+  color: #222;
+}
+
+.testimonio .año {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+
+.cta {
+  text-align: center;
+  margin: 3rem 0 2rem;
+}
+
+.cta-box {
+  background-color: #5f7570;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.cta-box h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.btn {
+  background-color: #483064;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn:hover {
+  background-color: #754375;
+}
+
+
+footer {
+  background-color: #f0f0f0;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: #555;
+}

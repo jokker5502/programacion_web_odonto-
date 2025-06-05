@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contacto - NeoSmile</title>
+    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="css/contacto.css"> 
+
+</head>
+<body>
+  <div class="container">
+    <header>
+        <h1>NeoSmile</h1>
+        <nav>
+            <ul>
+                <li><a href="Inicio.html" class="active">Inicio</a></li>
+                <li><a href="NuestrasEspecialidades.html" target="_blank">Especialidades</a></li>
+                <li><a href="contacto.html" target="_blank">Contacto</a></li>
+              </ul>
+        </nav>
+        <div class="cta-buttons">
+          <a href="AtencioEmergencias.html" class="btn emergency">Emergencias</a>
+          <a href="AgendarCita.html" class="btn primary">Agendar Cita</a>
+        </div>
+    </header>
+    
+    <section class="page-header">
+      <h2>Contacto</h2>
+      <p class="subtext">Estamos aquí para responder a todas sus consultas</p>
+    </section>
+
+    <section class="contact-cards">
+      <div class="card">
+        <h3>📞 Información de Contacto</h3>
+        <p>Encuentre la manera más conveniente de comunicarse con nosotros.</p>
+      </div>
+      <div class="card">
+        <h3>🕒 Horario de Atención</h3>
+        <p>
+          Lunes a Viernes: 8:00 - 20:00<br />
+          Sábados: 9:00 - 14:00<br />
+          Domingos: Cerrado
+        </p>
+      </div>
+      <div class="card highlight">
+        <h3>🚨 Emergencias Dentales</h3>
+        <p>Línea directa disponible 24/7 para casos urgentes.</p>
+        <a href="#" class="btn emergency">Llamar Ahora</a>
+      </div>
+    </section>
+
+    <section class="formulario-contacto">
+      <h3>Formulario de Contacto</h3>
+      <form>
+        <label>Nombre Completo</label>
+        <input type="text" placeholder="Ingrese su nombre completo" required />
+
+        <label>Correo Electrónico</label>
+        <input type="email" placeholder="ejemplo@correo.com" required />
+
+        <label>Teléfono</label>
+        <input type="tel" placeholder="+XX XXX XXX XXX" required />
+
+        <label>Servicio de Interés</label>
+        <select required>
+          <option value="">Seleccione un servicio</option>
+          <option>Odontología General</option>
+          <option>Ortodoncia</option>
+          <option>Estética Dental</option>
+          <option>Implantología</option>
+        </select>
+
+        <label>Mensaje</label>
+        <textarea rows="5" placeholder="Describa su consulta o solicitud" required></textarea>
+
+        <button type="submit" class="btn">Enviar Mensaje</button>
+      </form>
+    </section>
+
+  </div>
+</body>
+</html>
