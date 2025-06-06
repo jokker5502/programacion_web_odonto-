@@ -1,0 +1,87 @@
+/* =================================================================
+   ACCESO.CSS - Estilos para la Página de Login y Registro
+   ================================================================= */
+
+/* --- Contenedor Principal de la Página --- */
+.acceso-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1rem; /* Espaciado vertical */
+    min-height: 80vh; /* Asegura que ocupe casi toda la altura de la pantalla */
+}
+
+/* --- La Tarjeta Principal que contiene todo --- */
+.acceso-card {
+    background-color: var(--color-white);
+    padding: 2.5rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 480px; /* Ancho máximo de la tarjeta */
+}
+
+/* --- Estilos para los Iconos del Formulario --- */
+.form-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-primary-light);
+    border-radius: 50%;
+    margin: 0 auto 1rem auto;
+}
+.form-icon svg {
+    stroke: var(--color-primary);
+    width: 24px;
+    height: 24px;
+}
+
+/* --- Estilos para los encabezados y párrafos dentro de la tarjeta --- */
+.acceso-card .section-header h2 {
+    font-size: 1.5rem;
+}
+
+.acceso-card .section-header p {
+    margin-bottom: 1.5rem;
+}
+
+/* --- Estilos para los enlaces (ej. olvidaste tu contraseña) --- */
+.form-group.submit-group {
+    text-align: center;
+}
+.form-link {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* --- Separador "o" entre los dos formularios --- */
+.form-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--color-text-light);
+    margin: 2.5rem 0;
+}
+.form-separator::before,
+.form-separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--color-border);
+}
+.form-separator span {
+    padding: 0 1rem;
+}
+
+/* --- Texto legal al pie de la página --- */
+.form-footer-text {
+    text-align: center;
+    max-width: 480px;
+    margin: 1.5rem auto 0 auto;
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+}
