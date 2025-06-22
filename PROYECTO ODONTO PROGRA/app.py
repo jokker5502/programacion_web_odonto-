@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, date # Necesario para manejar fechas y horas
+from datetime import datetime, date, timedelta # Necesario para manejar fechas y horas
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import jsonify
+
 
 app = Flask(__name__)
 
@@ -17,8 +19,8 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'ruta_acceso' # <-- A qué ruta redirigir si alguien intenta acceder a una página protegida sin iniciar sesión.
-login_manager.login_message = "Por favor, inicia sesión para acceder a esta página."
+login_manager.login_view = 'ruta_login'
+login_manager.login_message = "Por favor, inicia sesión para poder agendar una cita."
 login_manager.login_message_category = "info" # Categoría para mensajes flash
 
 @login_manager.user_loader
@@ -62,15 +64,23 @@ class Especialidad(db.Model):
     citas = db.relationship('Cita', backref='especialidad_info', lazy=True)
     especialistas = db.relationship('Especialista', backref='especialidad_asignada_info', lazy=True)
 
+# En app.py, reemplaza tu clase Especialista
 class Especialista(db.Model):
     __tablename__ = 'Especialistas'
-    id_especialista = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_especialista = db.Column(db.Integer, primary_key=True)
     nombre_completo = db.Column(db.String(255), nullable=False)
     id_especialidad = db.Column(db.Integer, db.ForeignKey('Especialidades.id_especialidad'))
     correo_electronico = db.Column(db.String(255), unique=True, nullable=True)
     telefono = db.Column(db.String(20), nullable=True)
-    # Relación
+    es_principal = db.Column(db.Boolean, default=False, nullable=False)
+    # ELIMINAMOS las columnas de hora de aquí, porque ahora están en su propia tabla
+    # hora_inicio = ... (ELIMINAR)
+    # hora_fin = ... (ELIMINAR)
+
+    # AÑADIMOS la relación con la nueva tabla de horarios
+    horarios = db.relationship('Horario', backref='especialista', lazy=True)
     citas = db.relationship('Cita', backref='especialista_info', lazy=True)
+
 
 class Cita(db.Model):
     __tablename__ = 'Citas'
@@ -109,6 +119,14 @@ class MensajeContacto(db.Model):
     fecha_envio = db.Column(db.TIMESTAMP, default=datetime.utcnow)
     estado_mensaje = db.Column(db.Enum('No leído', 'Leído', 'Respondido'), default='No leído')
 
+# En app.py, junto a tus otros modelos
+class Horario(db.Model):
+    __tablename__ = 'Horarios'
+    id_horario = db.Column(db.Integer, primary_key=True)
+    id_especialista = db.Column(db.Integer, db.ForeignKey('Especialistas.id_especialista'), nullable=False)
+    dia_semana = db.Column(db.Integer, nullable=False) # 0=Lunes, 6=Domingo
+    hora_inicio = db.Column(db.Time, nullable=False)
+    hora_fin = db.Column(db.Time, nullable=False)
 
 # --- Rutas (Endpoints de tu aplicación) ---
 
@@ -124,103 +142,151 @@ def ruta_acceso():
     return render_template('SingIn.html')
 
 
-@app.route('/login', methods=['POST'])
-def ruta_login():
-    correo = request.form.get('correo')
-    password = request.form.get('password')
-    
-    # Buscar al paciente por correo
-    paciente = Paciente.query.filter_by(correo_electronico=correo).first()
-    
-    # Verificar si el paciente existe y si la contraseña es correcta
-    if not paciente or not paciente.check_password(password):
-        flash('Correo electrónico o contraseña incorrectos. Por favor, intenta de nuevo.', 'danger')
-        return redirect(url_for('ruta_acceso'))
-    
-    # Si todo es correcto, iniciamos la sesión del usuario
-    login_user(paciente)
-    flash(f'¡Bienvenido de nuevo, {paciente.nombre_completo}!', 'success')
-    
-    # Redirigir a la página de agendar cita o a un futuro "dashboard"
-    return redirect(url_for('ruta_agendar_cita'))
 
-# En app.py, reemplaza tu función ruta_registro con esta:
-
-# En app.py
-
-@app.route('/registro', methods=['POST'])
-def ruta_registro():
-    # Obtenemos todos los datos del formulario de registro
-    nombre = request.form.get('nombre_completo')
-    correo = request.form.get('correo')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm_password')
-    telefono = request.form.get('telefono')
-    fecha_nacimiento_str = request.form.get('fecha_nacimiento')
-
-    # --- VALIDACIONES SECUENCIALES ---
-
-    # 1. ¿Correo electrónico ya existe?
-    usuario_existente = Paciente.query.filter_by(correo_electronico=correo).first()
-    if usuario_existente:
-        flash('El correo electrónico ya está en uso. Por favor, elige otro o inicia sesión.', 'danger')
-        return redirect(url_for('ruta_acceso'))
-
-    # 2. ¿Las contraseñas no coinciden?
-    if password != confirm_password:
-        flash('Las contraseñas no coinciden. Por favor, vuelve a intentarlo.', 'danger')
-        return redirect(url_for('ruta_acceso'))
-        
-    # 3. ¿El correo tiene un '@'?
-    if '@' not in correo:
-        flash('El formato del correo electrónico no es válido.', 'danger')
-        return redirect(url_for('ruta_acceso'))
-
-    # 4. ¿El teléfono tiene 10 dígitos (si se proporcionó)?
-    if telefono and (not telefono.isdigit() or len(telefono) != 10):
-        flash('El número de teléfono debe contener exactamente 10 dígitos numéricos.', 'danger')
-        return redirect(url_for('ruta_acceso'))
-        
-    # 5. ¿La fecha de nacimiento es válida y el usuario es mayor de 18?
-    if not fecha_nacimiento_str:
-        flash('La fecha de nacimiento es un campo obligatorio.', 'danger')
-        return redirect(url_for('ruta_acceso'))
-        
+@app.route('/api/horarios-disponibles/<int:doctor_id>/<string:fecha_str>')
+@login_required
+def horarios_disponibles(doctor_id, fecha_str):
     try:
-        fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date()
-        hoy = date.today()
-        edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+        fecha = datetime.strptime(fecha_str, '%Y-%m-%d').date()
+        dia_de_semana = fecha.weekday() # 0=Lunes, 1=Martes, ...
+
+        # 1. Buscar el horario del doctor para ESE día de la semana
+        horario_del_dia = Horario.query.filter_by(id_especialista=doctor_id, dia_semana=dia_de_semana).first()
+
+        # Si no se encuentra horario, el doctor no trabaja ese día
+        if not horario_del_dia:
+            return jsonify([]) # Devolvemos una lista vacía
+
+        # 2. Obtener las citas ya agendadas para ese doctor en esa fecha
+        citas_existentes = Cita.query.filter_by(id_especialista_preferido=doctor_id, fecha_cita=fecha).all()
+        horas_ocupadas = {cita.hora_cita for cita in citas_existentes}
+
+        # 3. Generar los posibles horarios usando el horario específico del doctor para ese día
+        horas_disponibles = []
+        hora_actual = horario_del_dia.hora_inicio
+        hora_fin = horario_del_dia.hora_fin
+
+        while hora_actual < hora_fin:
+            # Si la hora no está en la lista de horas ocupadas, la añadimos
+            if hora_actual not in horas_ocupadas:
+                horas_disponibles.append(hora_actual.strftime('%H:%M'))
+            
+            # Avanzamos a la siguiente hora (o el intervalo que desees, ej. 30 minutos)
+            hora_actual = (datetime.combine(date.today(), hora_actual) + timedelta(hours=1)).time()
+
+        return jsonify(horas_disponibles)
+
+    except Exception as e:
+        app.logger.error(f"Error en API de horarios: {e}")
+        return jsonify({'error': 'Ocurrió un error al calcular los horarios.'}), 500
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def ruta_login():
+    # Si el usuario ya está logueado, lo redirigimos a su cuenta en lugar de mostrarle el login de nuevo
+    if current_user.is_authenticated:
+        return redirect(url_for('ruta_mi_cuenta'))
+
+    if request.method == 'POST':
+        correo = request.form.get('correo')
+        password = request.form.get('password')
+
+        # Buscamos al paciente por su correo electrónico
+        paciente = Paciente.query.filter_by(correo_electronico=correo).first()
+
+        # Verificamos si el paciente existe Y si su contraseña es correcta
+        if not paciente or not paciente.check_password(password):
+            flash('Correo electrónico o contraseña incorrectos.', 'danger')
+            return redirect(url_for('ruta_login'))
         
-        if edad < 18:
-            flash('Debes ser mayor de 18 años para poder registrarte.', 'danger')
-            return redirect(url_for('ruta_acceso'))
-    except ValueError:
-        flash('El formato de la fecha de nacimiento no es válido.', 'danger')
-        return redirect(url_for('ruta_acceso'))
+        # Si todo es correcto, iniciamos la sesión del usuario con Flask-Login
+        login_user(paciente)
+        flash(f'¡Bienvenido de nuevo, {paciente.nombre_completo.split()[0]}!', 'success')
+        
+        # Redirigimos al nuevo panel de "Mi Cuenta"
+        return redirect(url_for('ruta_mi_cuenta'))
 
-    # --- SI TODO ESTÁ CORRECTO ---
+    # Si el método es GET, simplemente mostramos la página de login
+    return render_template('Login.html')
 
-    # Si pasamos todas las validaciones, creamos el nuevo paciente
-    nuevo_paciente = Paciente(
-        nombre_completo=nombre,
-        correo_electronico=correo,
-        telefono=telefono
-        # Nota: No guardamos la edad, sino la fecha de nacimiento si tuvieras esa columna.
-    )
-    nuevo_paciente.set_password(password) # ¡Guardamos la contraseña encriptada!
-    
-    db.session.add(nuevo_paciente)
-    db.session.commit()
-    
-    # ¡Mensaje de Éxito!
-    flash('¡Felicidades! Te has registrado correctamente. Ahora puedes iniciar sesión.', 'success')
-    return redirect(url_for('ruta_acceso'))
+
+# --- RUTA DE REGISTRO ---
+@app.route('/registro', methods=['GET', 'POST'])
+def ruta_registro():
+    # Si el usuario ya está logueado, no tiene sentido que vea la página de registro
+    if current_user.is_authenticated:
+        return redirect(url_for('ruta_mi_cuenta'))
+        
+    if request.method == 'POST':
+        # Obtenemos todos los datos del formulario de registro
+        nombre = request.form.get('nombre_completo')
+        correo = request.form.get('correo')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        telefono = request.form.get('telefono')
+        fecha_nacimiento_str = request.form.get('fecha_nacimiento')
+
+        # --- VALIDACIONES SECUENCIALES ---
+        # (Esta lógica ya estaba bien, pero la dejamos aquí completa)
+        usuario_existente = Paciente.query.filter_by(correo_electronico=correo).first()
+        if usuario_existente:
+            flash('El correo electrónico ya está en uso. Por favor, elige otro.', 'danger')
+            return redirect(url_for('ruta_registro'))
+
+        if password != confirm_password:
+            flash('Las contraseñas no coinciden.', 'danger')
+            return redirect(url_for('ruta_registro'))
+        
+        if '@' not in correo:
+            flash('El formato del correo electrónico no es válido.', 'danger')
+            return redirect(url_for('ruta_registro'))
+
+        if telefono and (not telefono.isdigit() or len(telefono) != 10):
+            flash('El teléfono debe tener 10 dígitos numéricos.', 'danger')
+            return redirect(url_for('ruta_registro'))
+        
+        if not fecha_nacimiento_str:
+            flash('La fecha de nacimiento es obligatoria.', 'danger')
+            return redirect(url_for('ruta_registro'))
+            
+        try:
+            fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, '%Y-%m-%d').date()
+            hoy = date.today()
+            edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+            if edad < 18:
+                flash('Debes ser mayor de 18 años para registrarte.', 'danger')
+                return redirect(url_for('ruta_registro'))
+        except ValueError:
+            flash('El formato de fecha de nacimiento no es válido.', 'danger')
+            return redirect(url_for('ruta_registro'))
+
+        # --- Si todo está correcto, creamos el usuario ---
+        nuevo_paciente = Paciente(
+            nombre_completo=nombre,
+            correo_electronico=correo,
+            telefono=telefono
+        )
+        nuevo_paciente.set_password(password)
+        
+        db.session.add(nuevo_paciente)
+        db.session.commit()
+        
+        flash('¡Registro exitoso! Ahora puedes iniciar sesión.', 'success')
+        return redirect(url_for('ruta_login')) # Redirigimos a la página de login para que inicie sesión
+
+    # Si el método es GET, mostramos la página de registro
+    return render_template('Registro.html')
 
 @app.route('/logout')
-@login_required # Solo alguien logueado puede desloguearse
+@login_required # Es una buena práctica requerir que el usuario esté logueado para poder desloguearse
 def ruta_logout():
+    # La función mágica de Flask-Login que borra la sesión del usuario
     logout_user()
-    flash('Has cerrado sesión exitosamente.', 'info')
+    
+    # Un mensaje amigable para confirmar que la sesión se cerró
+    flash('Has cerrado sesión exitosamente.', 'info') # 'info' puede ser una categoría de color azul o gris
+    
+    # Redirigimos al usuario a la página de inicio, que es pública
     return redirect(url_for('ruta_inicio'))
 
 # En app.py
@@ -230,6 +296,20 @@ def ruta_especialidades():
     especialistas = Especialista.query.all()
     # Se los pasamos a la plantilla
     return render_template('NuestrasEspecialidades.html', especialistas_db=especialistas)
+
+# En app.py
+@app.errorhandler(404)
+def page_not_found(e):
+    # Nota: Pasamos el código de error 404 explícitamente
+    return render_template('404.html'), 404
+
+@app.route('/mi-cuenta')
+@login_required # ¡Protegida! Solo usuarios logueados pueden entrar.
+def ruta_mi_cuenta():
+    # Buscamos todas las citas que pertenecen al usuario actual
+    citas_paciente = Cita.query.filter_by(id_paciente=current_user.id_paciente).order_by(Cita.fecha_cita.desc()).all()
+    
+    return render_template('mi_cuenta.html', citas=citas_paciente)
 
 # Ruta para la página de Contacto (GET para mostrar, POST para procesar el formulario)
 @app.route('/contacto', methods=['GET', 'POST'])
@@ -274,6 +354,7 @@ def ruta_contacto():
 def ruta_agendar_cita():
     if request.method == 'POST':
         try:
+            
             nombre = request.form['nombre']
             correo = request.form['correo']
             telefono = request.form['telefono']
@@ -287,26 +368,46 @@ def ruta_agendar_cita():
             fecha_str = request.form['fecha']
             hora_str = request.form['hora']
             motivo = request.form.get('motivo')
+            hora_str = request.form.get('hora')
+            hora_obj = datetime.strptime(hora_str, '%H:%M').time()
+
+            # --- NUEVA VALIDACIÓN DE HORARIO ---
+    
+            # 1. Validar horario de atención (ej. 8 AM a 8 PM)
+            if not (datetime.strptime('08:00', '%H:%M').time() <= hora_obj <= datetime.strptime('20:00', '%H:%M').time()):
+                flash('El horario seleccionado está fuera de nuestras horas de atención (8:00 a 20:00).', 'danger')
+                return redirect(url_for('ruta_agendar_cita'))
+
+            # 2. Validar que la cita no esté ya ocupada
+            cita_existente = Cita.query.filter_by(fecha_cita=fecha_obj, hora_cita=hora_obj).first()
+            if cita_existente:
+                flash('La fecha y hora seleccionadas ya están ocupadas. Por favor, elige otro horario.', 'danger')
+                return redirect(url_for('ruta_agendar_cita'))
+
 
             # Convertir string de fecha y hora a objetos de Python
             fecha_obj = datetime.strptime(fecha_str, '%Y-%m-%d').date()
             hora_obj = datetime.strptime(hora_str, '%H:%M').time()
 
             nueva_cita = Cita(
-                nombre_completo_cita=nombre,
-                correo_cita=correo,
-                telefono_cita=telefono,
-                edad_cita=edad,
+                # --- LÍNEA CLAVE A AÑADIR ---
+                id_paciente=current_user.id_paciente, 
+                
+                # El resto de los campos que ya tenías
+                nombre_completo_cita=current_user.nombre_completo, # Podemos autollenar con los datos del usuario
+                correo_cita=current_user.correo_electronico,
+                telefono_cita=current_user.telefono,
                 id_especialidad_requerida=int(id_especialidad),
                 id_especialista_preferido=id_especialista,
                 fecha_cita=fecha_obj,
                 hora_cita=hora_obj,
                 motivo_consulta=motivo
             )
+
             db.session.add(nueva_cita)
             db.session.commit()
-            flash('Cita agendada con éxito. Te contactaremos para confirmar.', 'success')
-            return redirect(url_for('ruta_agendar_cita'))
+            flash('¡Tu cita ha sido solicitada con éxito! Revisa "Mi Cuenta" para ver el estado.', 'success')
+            return redirect(url_for('ruta_mi_cuenta'))
         
         except ValueError as ve: # Errores de conversión de tipo (ej. string a int)
             db.session.rollback()
@@ -329,29 +430,32 @@ def ruta_agendar_cita():
             'id_especialidad': doc.id_especialidad
         })
 
+    user_data = {
+        "nombre_completo": current_user.nombre_completo,
+        "correo_electronico": current_user.correo_electronico,
+        "telefono": current_user.telefono
+    }
+
     return render_template(
         'AgendarCita.html',
         especialidades_db=especialidades_db, 
-        especialistas_list_json=especialistas_list # Pasamos la nueva lista formateada
+        especialistas_list_json=especialistas_list, # Pasamos la nueva lista formateada
+        user_data_json=user_data
     )
+    
 
 
 # Ruta para la página de Atención de Emergencias
-# En app.py
 
 @app.route('/atencion-emergencias', methods=['GET', 'POST'])
 def ruta_atencion_emergencias():
     if request.method == 'POST':
         try:
-            # --- CORRECCIÓN DE SINTAXIS AQUÍ ---
-            # Usamos .get('...') con paréntesis
             nombre_usuario = request.form.get('nombre_usuario')
             telefono_contacto = request.form.get('telefono_contacto')
-            tipo_emergencia = request.form.get('opciones') # Definimos la variable correctamente
+            tipo_emergencia = request.form.get('opciones')
             descripcion = request.form.get('descripcion')
 
-            # --- CORRECCIÓN DE LÓGICA AQUÍ ---
-            # Verificamos la variable que sí definimos
             if not tipo_emergencia:
                 flash('Por favor, selecciona un tipo de emergencia.', 'danger')
                 return redirect(url_for('ruta_atencion_emergencias'))
@@ -375,6 +479,7 @@ def ruta_atencion_emergencias():
             return redirect(url_for('ruta_atencion_emergencias'))
 
     # El método GET se mantiene igual
+    flash('Tu solicitud de emergencia ha sido enviada. Te contactaremos a la brevedad.', 'success')
     return render_template('AtencionEmergencias.html')
 
 
@@ -416,3 +521,4 @@ if __name__ == '__main__':
 
 
     app.run(debug=True) # Inicia el servidor de desarrollo de Flask
+
