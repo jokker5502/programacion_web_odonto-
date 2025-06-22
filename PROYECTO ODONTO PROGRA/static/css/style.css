@@ -1,0 +1,404 @@
+/* =================================================================
+   STYLE.CSS - Base Fundamental para NeoSmile
+   ================================================================= */
+
+/* --- 1. Fuentes de Google y Variables Globales --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --color-primary: #4f46e5;
+    --color-primary-light: #e0e7ff;
+    --color-text-dark: #111827;
+    --color-text-body: #374151;
+    --color-text-light: #6b7280;
+    --color-background: #f9fafb;
+    --color-white: #ffffff;
+    --color-border: #e5e7eb;
+    --color-danger: #ef4444;
+    --color-whatsapp: #25D366;
+    --color-danger: #ef4444; /* Un rojo moderno y visible */
+    --font-family-base: 'Inter', sans-serif;
+    --border-radius-md: 0.5rem;
+    --border-radius-lg: 0.75rem;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* --- 2. Estilos Globales --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-background);
+    color: var(--color-text-body);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* --- 3. Tipografía --- */
+h1, h2, h3, h4 {
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 0.5em;
+    line-height: 1.2;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.125rem; }
+
+p {
+    margin-bottom: 1rem;
+    color: var(--color-text-light);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+}
+a:hover { opacity: 0.8; }
+
+/* En static/css/style.css */
+
+/* --- 4. Header y Navegación (VERSIÓN FLUIDA) --- */
+header {
+    background-color: var(--color-white);
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* ¡LA CLAVE! Permite que los elementos se muevan a la siguiente línea si no caben */
+    gap: 1rem;
+}
+
+header h1.logo {
+    font-size: 1.5rem;
+    margin-right: 2rem; /* Añade un espacio fijo después del logo */
+}
+
+.header-right-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Permite que los elementos dentro de este grupo también se reorganicen */
+    justify-content: flex-end; /* Alinea este grupo a la derecha */
+    gap: 1.5rem;
+    flex-grow: 1;
+}
+
+nav.main-nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Permite que los enlaces del menú se reorganicen */
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+nav.main-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text-body);
+    font-weight: 500;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+nav.main-nav a:hover,
+nav.main-nav a.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.cta-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* El nuevo estilo para el avatar del usuario */
+.user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    user-select: none; /* Evita que el texto se pueda seleccionar */
+}
+
+
+/* --- 5. Botones --- */
+
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem; /* <-- Hacemos los botones un poco más pequeños */
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.btn.primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn.primary:hover {
+    opacity: 0.9;
+}
+
+.btn.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-white);
+}
+
+
+.btn.btn-danger {
+    background-color: var(--color-danger); /* Usamos el color rojo que definimos */
+    color: var(--color-white);
+}
+
+.btn.btn-danger:hover {
+    background-color: #dc2626; /* Un rojo un poco más oscuro */
+    opacity: 1;
+}
+
+.btn.secondary {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.btn.secondary:hover {
+    background-color: #d1d5db; /* Un gris claro para el hover */
+    color: var(--color-primary);
+    opacity: 1; /* Reseteamos la opacidad si la heredaba */
+}
+
+/* --- 6. Formularios --- */
+.form-wrapper {
+    max-width: 600px;
+    margin: 2rem auto;
+    background: var(--color-white);
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--color-text-dark);
+    font-size: 0.875rem;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form input[type="date"],
+form input[type="time"],
+form input[type="password"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background-color: var(--color-white);
+    color: var(--color-text-dark);
+    box-shadow: var(--shadow-sm);
+    font-family: var(--font-family-base);
+    font-size: 1rem;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+form button[type="submit"] {
+    width: 100%;
+}
+
+.form-check-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.form-check-group input[type="checkbox"]{
+    width: auto;
+    height: 1em;
+    width: 1em;
+}
+
+/* --- 7. Componentes Generales --- */
+.card {
+    background-color: var(--color-white);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    height: 100%; /* Para que las tarjetas en un grid tengan la misma altura */
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-section {
+    padding: 4rem 0;
+}
+
+/* --- 8. Footer --- */
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 2rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
+
+
+/* --- 10. Estilos para el Modal (Pop-up) --- */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(17, 24, 39, 0.6); /* Fondo oscuro semitransparente */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.is-active {
+    display: flex; /* Se muestra con flex para centrar el contenido */
+}
+
+.modal-content {
+    background-color: var(--color-white);
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: var(--shadow-md);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-icon svg {
+    color: #10b981; /* Un verde éxito */
+    margin-bottom: 1rem;
+}
+
+.modal-title {
+    margin-bottom: 0.5rem;
+}
+
+.modal-text {
+    margin-bottom: 1.5rem;
+    color: var(--color-text-light);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* En static/css/style.css, al final */
+
+.citas-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+}
+.citas-table th, .citas-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+.citas-table th {
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+.status-badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.status-pendiente { background-color: #fef3c7; color: #92400e; }
+.status-confirmada { background-color: #d1fae5; color: #065f46; }
+.status-cancelada { background-color: #fee2e2; color: #991b1b; }
+
+.user-menu-container { position: relative; }
+.user-dropdown-menu {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
+    width: 150px;
+    z-index: 100;
+}
+.user-dropdown-menu.is-active { display: block; }
+.user-dropdown-menu a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--color-text-body);
+}
+.user-dropdown-menu a:hover {
+    background-color: var(--color-background);
+}

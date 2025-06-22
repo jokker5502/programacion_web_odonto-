@@ -1,0 +1,99 @@
+/* =================================================================
+   CONTACTO.CSS - Estilos para la Página de Contacto
+   ================================================================= */
+
+/* --- 1. Layout Principal (Grid Sidebar + Formulario) --- */
+.contact-page-grid {
+    display: grid;
+    /* Crea una columna para la sidebar de 1fr y una para el form de 2fr */
+    /* La sidebar ocupará 1/3 del espacio y el form 2/3 */
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    align-items: start; /* Alinea los items al inicio del grid */
+}
+
+/* Estilos para la barra lateral */
+.contact-sidebar .card {
+    margin-bottom: 1.5rem;
+}
+
+.contact-sidebar h3 {
+    font-size: 1.125rem; /* Un poco más pequeño para la sidebar */
+    display: flex;
+    align-items: center;
+}
+
+.contact-sidebar .card p {
+    margin-bottom: 0.5rem;
+}
+.contact-sidebar .card a {
+    font-weight: 400;
+}
+
+/* Estilos para el contenedor del formulario principal */
+.contact-form-container {
+    background-color: var(--color-white);
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border);
+}
+
+.contact-form-container h3 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* --- 2. Layout Secundario (Grid WhatsApp + Mapa) --- */
+.contact-extra-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 4rem;
+}
+
+/* Estilo específico para el botón de WhatsApp */
+.whatsapp-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: var(--color-whatsapp);
+    color: var(--color-white);
+    width: 100%;
+    margin-top: 1rem;
+}
+.whatsapp-btn:hover {
+    background-color: #1EBE57; /* Verde más oscuro */
+    opacity: 1;
+}
+
+/* Estilo para el contenedor del mapa */
+#map-display {
+    height: 300px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background-color: #f0f0f0; /* Color de fondo mientras carga el mapa */
+    margin-top: 1rem;
+}
+
+/* --- 3. Estilos Responsivos --- */
+
+/* Para tablets y dispositivos más pequeños */
+@media (max-width: 992px) {
+    .contact-page-grid {
+        /* El grid se convierte en una sola columna */
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Para móviles */
+@media (max-width: 768px) {
+    .contact-extra-grid {
+        /* El grid secundario también se convierte en una sola columna */
+        grid-template-columns: 1fr;
+    }
+
+    .contact-form-container {
+        padding: 1.5rem;
+    }
+}
